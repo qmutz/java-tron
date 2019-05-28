@@ -230,8 +230,10 @@ sourceSets {
             srcDir 'src/main/gen'
             srcDir 'src/main/java'
         }
+        resources {
+            srcDir 'src/main/resources'
+        }
     }
-
 }
 
 protobuf {
