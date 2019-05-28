@@ -14,7 +14,6 @@ public class KafkaConcurrentAppender<E> extends KafkaAppender<E> {
   protected void subAppend(E event) {
     LayoutWrappingEncoder<E> encoder = (LayoutWrappingEncoder<E>) this.getEncoder();
     String msg = encoder.getLayout().doLayout(event);
-    slf4jKafkaConfig.setKafkaTopic(((ILoggingEvent) event).getLoggerName());
     KafkaProducerConcurrentProcessor.send(slf4jKafkaConfig, msg);
   }
 }
