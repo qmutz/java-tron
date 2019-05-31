@@ -519,27 +519,27 @@ public class Wallet {
     TransactionCapsule trx = new TransactionCapsule(signaturedTransaction);
     try {
       Message message = new TransactionMessage(signaturedTransaction.toByteArray());
-      if (minEffectiveConnection != 0) {
-        if (tronNetDelegate.getActivePeer().isEmpty()) {
-          logger.warn("Broadcast transaction {} failed, no connection.", trx.getTransactionId());
-          return builder.setResult(false).setCode(response_code.NO_CONNECTION)
-              .setMessage(ByteString.copyFromUtf8("no connection"))
-              .build();
-        }
-
-        int count = (int) tronNetDelegate.getActivePeer().stream()
-            .filter(p -> !p.isNeedSyncFromUs() && !p.isNeedSyncFromPeer())
-            .count();
-
-        if (count < minEffectiveConnection) {
-          String info = "effective connection:" + count + " lt minEffectiveConnection:"
-              + minEffectiveConnection;
-          logger.warn("Broadcast transaction {} failed, {}.", trx.getTransactionId(), info);
-          return builder.setResult(false).setCode(response_code.NOT_ENOUGH_EFFECTIVE_CONNECTION)
-              .setMessage(ByteString.copyFromUtf8(info))
-              .build();
-        }
-      }
+//      if (minEffectiveConnection != 0) {
+//        if (tronNetDelegate.getActivePeer().isEmpty()) {
+//          logger.warn("Broadcast transaction {} failed, no connection.", trx.getTransactionId());
+//          return builder.setResult(false).setCode(response_code.NO_CONNECTION)
+//              .setMessage(ByteString.copyFromUtf8("no connection"))
+//              .build();
+//        }
+//
+//        int count = (int) tronNetDelegate.getActivePeer().stream()
+//            .filter(p -> !p.isNeedSyncFromUs() && !p.isNeedSyncFromPeer())
+//            .count();
+//
+//        if (count < minEffectiveConnection) {
+//          String info = "effective connection:" + count + " lt minEffectiveConnection:"
+//              + minEffectiveConnection;
+//          logger.warn("Broadcast transaction {} failed, {}.", trx.getTransactionId(), info);
+//          return builder.setResult(false).setCode(response_code.NOT_ENOUGH_EFFECTIVE_CONNECTION)
+//              .setMessage(ByteString.copyFromUtf8(info))
+//              .build();
+//        }
+//      }
 
       if (dbManager.isTooManyPending()) {
         logger.warn("Broadcast transaction {} failed, too many pending.", trx.getTransactionId());

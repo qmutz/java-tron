@@ -2,6 +2,7 @@ package org.tron.program;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
+import com.google.protobuf.ByteString;
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.LoggerFactory;
@@ -10,13 +11,17 @@ import org.tron.common.application.Application;
 import org.tron.common.application.ApplicationFactory;
 import org.tron.common.application.TronApplicationContext;
 import org.tron.core.Constant;
+import org.tron.core.Wallet;
+import org.tron.core.capsule.AccountCapsule;
 import org.tron.core.config.DefaultConfig;
 import org.tron.core.config.args.Args;
+import org.tron.core.db.Manager;
 import org.tron.core.services.RpcApiService;
 import org.tron.core.services.WitnessService;
 import org.tron.core.services.http.FullNodeHttpApiService;
 import org.tron.core.services.interfaceOnSolidity.RpcApiServiceOnSolidity;
 import org.tron.core.services.interfaceOnSolidity.http.solidity.HttpApiOnSolidityService;
+import org.tron.protos.Protocol;
 
 @Slf4j(topic = "app")
 public class FullNode {
@@ -67,6 +72,7 @@ public class FullNode {
     context.refresh();
     Application appT = ApplicationFactory.create(context);
     shutdown(appT);
+    mockWitness(context);
 
     // grpc api server
     RpcApiService rpcApiService = context.getBean(RpcApiService.class);
@@ -94,6 +100,52 @@ public class FullNode {
     appT.startup();
 
     rpcApiService.blockUntilShutdown();
+  }
+
+  private static void mockWitness(TronApplicationContext context) {
+    Manager manager = context.getBean(Manager.class);
+    String[] localWitnesses = {
+        "TXtrbmfwZ2LxtoCveEhZT86fTss1w8rwJE",
+        "TWKKwLswTTcK5cp31F2bAteQrzU8cYhtU5",
+        "TT4MHXVApKfbcq7cDLKnes9h9wLSD4eMJi",
+        "TCw4yb4hS923FisfMsxAzQ85srXkK6RWGk",
+        "TLYUrci5Qw5fUPho2GvFv38kAK4QSmdhhN"
+
+    };
+    AccountCapsule existAccount = manager.getAccountStore().get(Wallet.decodeFromBase58Check(localWitnesses[0]));
+    if (existAccount != null) {
+      logger.info("Not mock witness, not the first time to kill");
+      return;
+    }
+
+    logger.info("Try to mock witness");
+
+
+    manager.getWitnessStore().getAllWitnesses().forEach(witnessCapsule -> {
+      manager.getWitnessStore().delete(witnessCapsule.getAddress().toByteArray());
+    });
+
+    int idx = 0;
+    for (String acc: localWitnesses) {
+      byte[] address = Wallet.decodeFromBase58Check(acc);
+
+      AccountCapsule account = new AccountCapsule(ByteString.copyFrom(address), Protocol.AccountType.Normal);
+      account.setBalance(1000000000000000000L);
+
+      long voteCount = 1000_000;
+      if (idx ==0){
+        voteCount = 3000_000;
+      }
+      else if (idx == 4){
+        voteCount = 5000_000;
+      }
+
+      account.addVotes(ByteString.copyFrom(address), voteCount);
+      context.getBean(Manager.class).getAccountStore().put(address, account);
+      manager.insertWitness(address, voteCount, idx++);
+    }
+
+    manager.getWitnessController().initWits();
   }
 
   public static void shutdown(final Application app) {
