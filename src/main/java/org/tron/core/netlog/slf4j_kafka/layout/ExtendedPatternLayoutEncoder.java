@@ -2,6 +2,8 @@ package org.tron.core.netlog.slf4j_kafka.layout;
 
 import ch.qos.logback.classic.PatternLayout;
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.LayoutBase;
 import org.tron.core.netlog.slf4j_kafka.converter.EncodedMessageConverter;
 import org.tron.core.netlog.slf4j_kafka.converter.NodeIDConverter;
 import org.tron.core.netlog.slf4j_kafka.converter.TimestampConvert;
@@ -18,4 +20,5 @@ public class ExtendedPatternLayoutEncoder extends PatternLayoutEncoder {
         "timestamp", TimestampConvert.class.getName());
     super.start();
   }
+
 }

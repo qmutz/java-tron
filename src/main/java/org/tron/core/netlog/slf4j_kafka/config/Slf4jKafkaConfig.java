@@ -7,15 +7,20 @@ public class Slf4jKafkaConfig {
 
   private String bootstrapServers;
   private String kafkaTopic;
-  private String appId;
+
+  private Long timestamp;
+  private Integer partition;
+  private String kafkaKey;
+
+
+  public void setParamMap(Map<String, String> paramMap) {
+    this.paramMap = paramMap;
+  }
+
   private Map<String, String> paramMap = new HashMap<>();
 
   public Map<String, String> getParamMap() {
     return paramMap;
-  }
-
-  public void setParamMap(Map<String, String> paramMap) {
-    this.paramMap = paramMap;
   }
 
   public String getBootstrapServers() {
@@ -34,11 +39,27 @@ public class Slf4jKafkaConfig {
     this.kafkaTopic = kafkaTopic;
   }
 
-  public String getAppId() {
-    return appId;
+  public Long getTimestamp() {
+    return timestamp;
   }
 
-  public void setAppId(String appId) {
-    this.appId = appId;
+  public void setTimestamp(Long timestamp) {
+    this.timestamp = timestamp;
+  }
+
+  public Integer getPartition() {
+    return partition;
+  }
+
+  public void setPartition(Integer partition) {
+    this.partition = partition;
+  }
+
+  public String getKafkaKey() {
+    return kafkaKey;
+  }
+
+  public void setKafkaKey(String kafkaKey) {
+    this.kafkaKey = kafkaKey;
   }
 }

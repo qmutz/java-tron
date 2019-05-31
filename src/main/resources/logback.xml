@@ -47,24 +47,13 @@
 
 
   <!--Net Log Output-->
-  <property name="KAFKA_PATTERN" value="{'time':'%timestamp', 'topic': '%c{1}', 'id':'%nodeid', 'raw': '%raw'}"/>
+  <property name="KAFKA_PATTERN" value='{"time":"%timestamp", "level":"%level", "id":"%nodeid", "raw": "%raw"}'/>
 
-  <appender name="KAFKA-DB" class="org.tron.core.netlog.slf4j_kafka.appender.KafkaConcurrentAppender">
-    <filter class="org.tron.core.netlog.slf4j_kafka.filter.DBTopicFilter" />
-    <encoder class="org.tron.core.netlog.slf4j_kafka.layout.ExtendedPatternLayoutEncoder">
-      <pattern>${KAFKA_PATTERN}</pattern>
-    </encoder>
-  </appender>
-
-  <appender name="KAFKA-NET" class="org.tron.core.netlog.slf4j_kafka.appender.KafkaConcurrentAppender">
-    <filter class="org.tron.core.netlog.slf4j_kafka.filter.NetTopicFilter" />
-    <encoder class="org.tron.core.netlog.slf4j_kafka.layout.ExtendedPatternLayoutEncoder">
-      <pattern>${KAFKA_PATTERN}</pattern>
-    </encoder>
-  </appender>
-
-  <appender name="KAFKA-VM" class="org.tron.core.netlog.slf4j_kafka.appender.KafkaConcurrentAppender">
-    <filter class="org.tron.core.netlog.slf4j_kafka.filter.VmTopicFilter" />
+  <appender name="KAFKA-LOG"
+    class="org.tron.core.netlog.slf4j_kafka.appender.KafkaConcurrentAppender">
+    <topic>shy</topic>
+    <bootstrapServers>47.90.243.122:18890</bootstrapServers>
+    <filter class="org.tron.core.netlog.slf4j_kafka.filter.DBTopicFilter"/>
     <encoder class="org.tron.core.netlog.slf4j_kafka.layout.ExtendedPatternLayoutEncoder">
       <pattern>${KAFKA_PATTERN}</pattern>
     </encoder>
@@ -74,9 +63,7 @@
   <root level="INFO">
     <!--<appender-ref ref="STDOUT"/>-->
     <appender-ref ref="ASYNC"/>
-    <appender-ref ref="KAFKA-DB" />
-    <appender-ref ref="KAFKA-NET" />
-    <appender-ref ref="KAFKA-VM" />
+    <appender-ref ref="KAFKA-LOG"/>
   </root>
 
   <logger name="app" level="INFO"/>

@@ -7,15 +7,9 @@ import ch.qos.logback.core.spi.FilterReply;
 
 public class DBTopicFilter extends Filter<ILoggingEvent> {
 
-  private final String topic = "DB";
-
   @Override
   public FilterReply decide(ILoggingEvent event) {
-    if (topic.equals(event.getLoggerName())) {
-      return FilterReply.ACCEPT;
-    } else {
-      return FilterReply.DENY;
-    }
+    return FilterReply.ACCEPT;
   }
 }
 

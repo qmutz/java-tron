@@ -2,29 +2,31 @@ package org.tron.core.netlog.slf4j_kafka.kafka_producer;
 
 import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.tron.core.netlog.slf4j_kafka.config.Slf4jKafkaConfig;
+import org.tron.core.netlog.slf4j_kafka.exceptions.KafkaProducerCreateException;
 
 public class KafkaProducerContext {
 
-  private static KafkaProducer kafkaProducer;
+  public static Properties getDefaultProperties() {
+    Properties props = new Properties();
+    props.put("acks", "0");
+    props.put("retries", 0);
+    props.put("batch.size", 16384);
+    props.put("linger.ms", 1);
+    props.put("buffer.memory", 33554432);
+    props.put("max.block.ms", 6000);
+    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-  public static void init(Slf4jKafkaConfig slf4jKafkaConfig) {
-    if (kafkaProducer == null) {
-      Properties props = new Properties();
-      props.put("bootstrap.servers", slf4jKafkaConfig.getBootstrapServers());
-      //props.put("acks", "all");
-      props.put("retries", 0);
-      props.put("batch.size", 16384);
-      props.put("linger.ms", 1);
-      props.put("buffer.memory", 33554432);
-      props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-      props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-      kafkaProducer = new KafkaProducer(props);
-    }
+    return props;
   }
 
-  public static KafkaProducer getKafkaProducer() {
-    return kafkaProducer;
+
+  public static KafkaProducer makeKafkaProducer(Properties config)
+      throws KafkaProducerCreateException {
+    try {
+      return new KafkaProducer(config);
+    } catch (Exception e) {
+      throw new KafkaProducerCreateException();
+    }
   }
 }
