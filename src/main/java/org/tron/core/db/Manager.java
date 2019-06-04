@@ -75,6 +75,7 @@ import org.tron.core.config.args.Args;
 import org.tron.core.config.args.GenesisBlock;
 import org.tron.core.db.KhaosDatabase.KhaosBlock;
 import org.tron.core.db.api.AssetUpdateHelper;
+import org.tron.core.db.api.ZkPressureTestPreparer;
 import org.tron.core.db.fast.TrieService;
 import org.tron.core.db.fast.callback.FastSyncCallBack;
 import org.tron.core.db2.core.ISession;
@@ -486,6 +487,8 @@ public class Manager {
     if (Args.getInstance().isNeedToUpdateAsset() && needToUpdateAsset()) {
       new AssetUpdateHelper(this).doWork();
     }
+
+    new ZkPressureTestPreparer(this).doWork();
 
     //for test only
     dynamicPropertiesStore.updateDynamicStoreByConfig();
